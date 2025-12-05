@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRH Project Portfolio</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* === GLOBAL STYLES === */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #0f172a; /* Dark Slate */
+            font-family: 'Outfit', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+            padding: 60px 20px;
+            color: #e2e8f0;
+        }
+
+        /* === SLIDE CONTAINER (The "Slide" Look) === */
+        .slide-container {
+            width: 100%;
+            max-width: 1200px;
+            height: 700px;
+            background-color: #1e293b; /* Card Background */
+            position: relative;
+            overflow: hidden;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #334155;
+        }
+
+        /* Background Image Overlay for Mood */
+        .bg-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1; /* Subtle texture */
+            z-index: 0;
+            background-size: cover;
+            background-position: center;
+            mix-blend-mode: overlay;
+            pointer-events: none;
+        }
+
+        /* Typography */
+        h1, h2, h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            z-index: 1;
+        }
+
+        p {
+            z-index: 1;
+            line-height: 1.6;
+        }
+
+        /* === TITLE SLIDE === */
+        .title-content {
+            text-align: center;
+            z-index: 2;
+            background: rgba(15, 23, 42, 0.6);
+            padding: 60px 80px;
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .title-content h1 {
+            font-size: 72px;
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 24px;
+        }
+
+        .title-content p {
+            font-size: 24px;
+            color: #cbd5e1;
+            letter-spacing: 1px;
+        }
+
+        /* === INTERACTIVE PROJECT CARD === */
+        .project-layout {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            perspective: 1000px;
+        }
+
+        /* The Main Card */
+        .project-card {
+            width: 850px;
+            height: 500px;
+            background: #0f172a;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #334155;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .project-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 30px 60px -12px rgba(56, 189, 248, 0.2);
+            border-color: #38bdf8;
+        }
+
+        /* Image Section (Top 70%) */
+        .card-image-container {
+            width: 100%;
+            height: 70%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.7s ease;
+        }
+
+        .project-card:hover .card-image {
+            transform: scale(1.08);
+        }
+
+        /* "Click Me" Badge */
+        .click-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.7);
+            color: #38bdf8;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: opacity 0.3s;
+            z-index: 5;
+        }
+
+        /* Summary Section (Bottom 30%) - Visible Initially */
+        .card-summary {
+            height: 30%;
+            padding: 0 40px;
+            background: #1e293b;
+            position: relative;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-top: 1px solid #334155;
+        }
+
+        .card-summary h2 {
+            font-size: 32px;
+            color: #f1f5f9;
+            margin-bottom: 8px;
+        }
+
+        .card-summary .tagline {
+            font-size: 18px;
+            color: #94a3b8;
+            font-weight: 300;
+        }
+
+        /* Hidden Details Panel - Slides Up on Click */
+        .card-details {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0; /* Starts hidden */
+            background: rgba(15, 23, 42, 0.98); /* Almost opaque dark blue */
+            backdrop-filter: blur(20px);
+            overflow: hidden;
+            transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 0 50px;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-top: 1px solid #38bdf8;
+        }
+
+        /* Active State Classes */
+        .project-card.active .card-details {
+            height: 100%; /* Expands to fill card */
+            padding: 50px;
+        }
+
+        .project-card.active .click-indicator {
+            opacity: 0;
+        }
+
+        /* Content Animation inside the panel */
+        .detail-content {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.4s 0.2s, transform 0.4s 0.2s;
+        }
+
+        .project-card.active .detail-content {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .detail-title {
+            font-size: 40px;
+            color: #38bdf8;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid rgba(56, 189, 248, 0.2);
+            display: inline-block;
+        }
+
+        .detail-text {
+            font-size: 20px;
+            color: #cbd5e1;
+            line-height: 1.8;
+            margin-bottom: 40px;
+            max-width: 700px;
+        }
+
+        /* Stats Row */
+        .stats-row {
+            display: flex;
+            gap: 60px;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            text-transform: uppercase;
+            color: #64748b;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+        }
+
+        /* Close Icon Hint */
+        .close-hint {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            color: #64748b;
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .close-hint:hover { color: #fff; }
+
+        /* === FOOTER SLIDE === */
+        .end-layout {
+            text-align: center;
+            z-index: 2;
+        }
+        
+        .contact-btn {
+            margin-top: 40px;
+            padding: 18px 50px;
+            font-size: 20px;
+            background: #38bdf8;
+            color: #0f172a;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .contact-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.6);
+        }
+    </style>
+</head>
+<body>
+
+<!-- SLIDE 1: Title -->
+<div class="slide-container">
+    <div class="bg-overlay" style="background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop');"></div>
+    <div class="title-content">
+        <h1>SRH PORTFOLIO</h1>
+        <p>Exploring The Frontiers of Research and Engineering</p>
+        <p style="font-size: 16px; margin-top: 20px; opacity: 0.7;">(Scroll down to explore)</p>
+    </div>
+</div>
+
+<!-- SLIDE 2: PETERS Project -->
+<div class="slide-container">
+    <div class="bg-overlay" style="background-image: url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2070&auto=format&fit=crop');"></div>
+    
+    <div class="project-layout">
+        <!-- Interactive Card -->
+        <div class="project-card" onclick="toggleCard(this)">
+            
+            <!-- Badge -->
+            <div class="click-indicator">
+                <i class="fa-solid fa-hand-pointer"></i> Click for Details
+            </div>
+
+            <!-- Image -->
+            <div class="card-image-container">
+                <video class="card-image" autoplay muted loop playsinline>
+                    <source src="C:\Users\CONSILIO\Desktop\SRH WEBSITE\IMG_4480.MP4" type="video/mp4">
+                    
+                </video>
+            </div>
+
+            <!-- Visible Summary -->
+            <div class="card-summary">
+                <h2>Particle in a Box + Tunneling</h2>
+                <p class="tagline">Quantum Confinement and Barrier Penetration</p>
+            </div>
+
+            <!-- Hidden Reveal Content -->
+            <div class="card-details">
+                <div class="close-hint"><i class="fa-solid fa-xmark"></i></div>
+                <div class="detail-content">
+                    <h3 class="detail-title">Particle in a Box + Tunneling</h3>
+                    <p class="detail-text">
+                        The particle in a box model shows how a confined quantum particle has discrete energy levels, while finite barriers allow its wavefunction to penetrate and pass through them. This tunneling effect explains phenomena like electron transport, radioactive decay, and nanoscale device operation.</p>
+                    <div class="stats-row">
+                        <div class="stat">
+                            <span class="stat-value">90%</span>
+                            <span class="stat-label">Efficiency </span>
+                        </div>
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 3: Energy Project -->
+<div class="slide-container">
+    <div class="bg-overlay" style="background-image: url('https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=2072&auto=format&fit=crop');"></div>
+    
+    <div class="project-layout">
+        <div class="project-card" onclick="toggleCard(this)">
+            <div class="click-indicator">
+                <i class="fa-solid fa-hand-pointer"></i> Click for Details
+            </div>
+
+            <div class="card-image-container">
+                <img class="card-image" src="C:\Users\CONSILIO\Desktop\SRH WEBSITE\Screenshot (2).png" alt="Smart Grid">
+            </div>
+
+            <div class="card-summary">
+                <h2>PLC BASED SORTING  MACHINCE </h2>
+                <p class="tagline">Industrial Sorting Automation with PLC Control</p>
+            </div>
+
+            <div class="card-details">
+                <div class="close-hint"><i class="fa-solid fa-xmark"></i></div>
+                <div class="detail-content">
+                    <h3 class="detail-title">PLC BASED SORTING  MACHINCE</h3>
+                    <p class="detail-text">
+                        A PLC-based sorting machine uses sensors, actuators, and programmed logic to automatically detect, classify, and separate objects based on size, color, weight, or material. It improves accuracy, speed, and reliability in industrial processes while reducing human error and operational costs.</p>
+                    <div class="stats-row">
+                        <div class="stat">
+                            <span class="stat-value">60%</span>
+                            <span class="stat-label">Boosts speed by </span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">80%</span>
+                            <span class="stat-label">Reduces human-related errors</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 4: Fintech Project -->
+<div class="slide-container">
+    <div class="bg-overlay" style="background-image: url('https://images.unsplash.com/photo-1639322537228-f710d846310a?q=80&w=2232&auto=format&fit=crop');"></div>
+    
+    <div class="project-layout">
+        <div class="project-card" onclick="toggleCard(this)">
+            <div class="click-indicator">
+                <i class="fa-solid fa-hand-pointer"></i> Click for Details
+            </div>
+
+            <div class="card-image-container">
+                <img class="card-image" src="C:\Users\CONSILIO\Desktop\SRH WEBSITE\Screenshot (307).png" alt="Fintech Security">
+            </div>
+
+            <div class="card-summary">
+                <h2>REMOTE GENSET MONITORING SYSTEM </h2>
+                <p class="tagline">LabVIEW-Based Remote Monitoring and Control for Diesel Generators</p>
+            </div>
+
+            <div class="card-details">
+                <div class="close-hint"><i class="fa-solid fa-xmark"></i></div>
+                <div class="detail-content">
+                    <h3 class="detail-title">REMOTE GENSET MONITORING SYSTEM</h3>
+                    <p class="detail-text">
+                        Designed for high-frequency trading platforms, VaultSecure creates an immutable ledger for all transaction attempts. Our proprietary "Digital Shield" interface provides admins with a holographic view of threat vectors, stopping fraud attempts in milliseconds.
+                    </p>
+                    <div class="stats-row">
+                      
+                        <div class="stat">
+                            <span class="stat-value">80%</span>
+                            <span class="stat-label">Reduces Manual Checks by</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+   <script>
+    function toggleCard(element) {
+        // Toggle the active class to trigger CSS transitions
+        element.classList.toggle('active');
+    }
+</script>
+
+
+
+<!-- SLIDE 3: Energy Project -->
+<div class="slide-container">
+    <div class="bg-overlay" style="background-image: url('https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=2072&auto=format&fit=crop');"></div>
+    
+    <div class="project-layout">
+        <div class="project-card" onclick="toggleCard(this)">
+            <div class="click-indicator">
+                <i class="fa-solid fa-hand-pointer"></i> Click for Details
+            </div>
+
+            <div class="card-image-container">
+                <img class="card-image" src="C:\Users\CONSILIO\Desktop\SRH WEBSITE\Screenshot_20251119-204427_LinkedIn.jpg" alt="Smart Grid">
+            </div>
+
+            <div class="card-summary">
+                <h2>A Robust PINN Framework for Two-Phase Flow</h2>
+                <p class="tagline">Enhancing Boundary Stability and Physical Accuracy for Next-Generation Industrial Flow Simulation</p>
+            </div>
+
+            <div class="card-details">
+                <div class="close-hint"><i class="fa-solid fa-xmark"></i></div>
+                <div class="detail-content">
+                    <h3 class="detail-title">PINN Framework for Two-Phase Flow</h3>
+                    <p class="detail-text">
+                        This project presents a robust Physics-Informed Neural Network framework for two-phase flow, integrating adaptive residual weighting and strict boundary enforcement. The model reduces instability at domain interfaces while preserving dynamic flow prediction, offering a fast, physically consistent alternative to conventional CFD for industrial Oil and Gas applications</p>
+                    <div class="stats-row">
+                        <div class="stat">
+                            <span class="stat-value">93%</span>
+                            <span class="stat-label">Prediction Accuracy</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">70%</span>
+                            <span class="stat-label">Flow-interface Smoothness</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 4: Fintech Project -->
+<div class="slide-container">
+    <div class="bg-overlay" style="background-image: url('https://images.unsplash.com/photo-1639322537228-f710d846310a?q=80&w=2232&auto=format&fit=crop');"></div>
+    
+    <div class="project-layout">
+        <div class="project-card" onclick="toggleCard(this)">
+            <div class="click-indicator">
+                <i class="fa-solid fa-hand-pointer"></i> Click for Details
+            </div>
+
+            <div class="card-image-container">
+                <img class="card-image" src="C:\Users\CONSILIO\Desktop\SRH WEBSITE\Screenshot (11).png" alt="Fintech Security">
+            </div>
+
+            <div class="card-summary">
+                <h2>3D Model of a Three-Phase Induction Motor</h2>
+                <p class="tagline">Detailed Geometric Representation of Rotor, Stator, and Electromagnetic Assembly</p>
+            </div>
+
+            <div class="card-details">
+                <div class="close-hint"><i class="fa-solid fa-xmark"></i></div>
+                <div class="detail-content">
+                    <h3 class="detail-title">3D Model of a Three-Phase Induction Motor</h3>
+                    <p class="detail-text">
+                        This project presents a comprehensive 3D model of a three-phase induction motor, including stator laminations, rotor cage, housing, and shaft assembly. The model enables accurate visualization of component geometry, mechanical layout, and spatial clearances, supporting educational demonstrations, design verification, and manufacturing-oriented structural planning.</p>
+                    <div class="stats-row">
+                        <div class="stat">
+                            <span class="stat-value">97%</span>
+                            <span class="stat-label">Visualization clarity</span>
+                        </div>
+                    
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function toggleCard(element) {
+        // Toggle the active class to trigger CSS transitions
+        element.classList.toggle('active');
+    }
+</script>
+
+<!-- SLIDE 2: Logistics Project -->
+<div class="slide-container">
+    <div class="bg-overlay" style="background-image: url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2070&auto=format&fit=crop');"></div>
+    
+    <div class="project-layout">
+        <!-- Interactive Card -->
+        <div class="project-card" onclick="toggleCard(this)">
+            
+            <!-- Badge -->
+            <div class="click-indicator">
+                <i class="fa-solid fa-hand-pointer"></i> Click for Details
+            </div>
+
+            <!-- Image -->
+            <div class="card-image-container">
+                <img class="card-image" src="C:\Users\CONSILIO\Desktop\SRH WEBSITE\Screenshot (181).png" alt="Logistics Warehouse">
+            </div>
+
+            <!-- Visible Summary -->
+            <div class="card-summary">
+                <h2>Automatic Energy Management System</h2>
+                <p class="tagline">Sensor-Based Control for Optimizing Power Usage in Learning Environments</p>
+            </div>
+
+            <!-- Hidden Reveal Content -->
+            <div class="card-details">
+                <div class="close-hint"><i class="fa-solid fa-xmark"></i></div>
+                <div class="detail-content">
+                    <h3 class="detail-title">Automatic Energy Management System</h3>
+                    <p class="detail-text">
+                        This project develops an automatic energy management system using sensors, timers, and intelligent control logic to regulate lighting, ventilation, and appliance power. The system reduces unnecessary energy consumption, improves operational efficiency, and enhances sustainability by automating usage based on occupancy and environmental conditions.</p>
+                    <div class="stats-row">
+                        <div class="stat">
+                            <span class="stat-value">40%</span>
+                            <span class="stat-label">Energy Savings</span>
+                        </div>
+              
+                 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<!-- SLIDE 2: Logistics Project -->
+<div class="slide-container">
+    <div class="bg-overlay" style="background-image: url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2070&auto=format&fit=crop');"></div>
+    
+    <div class="project-layout">
+        <!-- Interactive Card -->
+        <div class="project-card" onclick="toggleCard(this)">
+            
+            <!-- Badge -->
+            <div class="click-indicator">
+                <i class="fa-solid fa-hand-pointer"></i> Click for Details
+            </div>
+
+            <!-- Image -->
+            <div class="card-image-container">
+                <img class="card-image" src="C:\Users\CONSILIO\Desktop\SRH WEBSITE\matlad sage.jpg" alt="Logistics Warehouse">
+            </div>
+
+            <!-- Visible Summary -->
+            <div class="card-summary">
+                <h2>DC MOTOR OF SPEED CONTROL BY USING FUZZY CONTROLLER</h2>
+                <p class="tagline"> Speed Control System For A DC Motor By Using Fuzzy Controller In MATLAB</p>
+            </div>
+
+            <!-- Hidden Reveal Content -->
+            <div class="card-details">
+                <div class="close-hint"><i class="fa-solid fa-xmark"></i></div>
+                <div class="detail-content">
+                    <h3 class="detail-title">DC MOTOR OF SPEED CONTROL BY USING FUZZY CONTROLLER</h3>
+                    <p class="detail-text">
+                        This study designs a Fuzzy Logic Controller to optimize DC motor speed regulation using MATLAB. Simulation results confirm superior dynamic response, achieving significantly reduced overshoot and faster settling times compared to conventional PID methods, ensuring robust performance under load disturbances<div class="stats-row">
+                        <div class="stat">
+                            <span class="stat-value"> < 1%</span>
+                            <span class="stat-label">Steady-State Error </span>
+                        </div>
+              
+                 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<!-- SLIDE 5: Closing -->
+<div class="slide-container">
+    <div class="bg-overlay" style="background-image: url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070&auto=format&fit=crop');"></div>
+    <div class="end-layout">
+        <h1 style="font-size: 60px; margin-bottom: 20px; color: #f8fafc;">Let's Build Something Great</h1>
+        <p style="font-size: 24px; color: #cbd5e1;">We are ready to take on your next challenge.</p>
+        <button class="contact-btn">Contact Us</button>
+    </div>
+</div>
+
+<script>
+    function toggleCard(element) {
+        // Toggle the active class to trigger CSS transitions
+        element.classList.toggle('active');
+    }
+</script>
+
+</body>
+</html>
